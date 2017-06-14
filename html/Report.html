@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+
+<head> <meta http-equiv="content-type" content="text/html; charset=utf-8"> 
+<title>Investigation on suttering - comparing 2.0 and dev2</title>
+<link rel="stylesheet" type="text/css" href="myStyle.css">
+</head> 
+
+<body> 
+
+<script type="text/javascript">
+function createImageCompareTable(idToReplace, pathToImage0, pathToImage1) {
+    var htmlContent = "<TABLE> \
+        <TR><td> \
+        <a href='URL ADDRESS'><img src='" + pathToImage0 +
+        "' onmouseover=\"this.src='" + pathToImage1 +
+        "'\" onmouseout=\"this.src='" + pathToImage0 + "'\" /></a> \
+        </td></TR>\
+        </TABLE>"
+
+    document.getElementById(idToReplace).innerHTML = htmlContent
+}
+</script>
+
+<H1>Investigation on suttering - comparing 2.0 and dev2</H1>
+
+<h3>LEBL fly over at mach2</h3>
+<p id = "image0"></p>
+
+<h3>LEBL loading High resolution texture at mach 1</h3>
+<p id = "image1"></p>
+
+<h3>LEBL loading High resolution texture at mach 40</h3>
+<p id = "image2"></p>
+
+<h3>LEBL fly over at mach60</h3>
+<p id = "image3"></p>
+
+<h3>LEBL fly over at mach60 - freerunning</h3>
+<p id = "image4"></p>
+
+
+<script type="text/javascript">
+    var imageFolder = "images/"
+
+    createImageCompareTable("image0", 
+        imageFolder + "LEBL flyover @mach2 - 2.0.0.5681.png",
+        imageFolder + "LEBL flyover @mach2 - new - 20MB max, 150 lines.png")
+    
+    createImageCompareTable("image1", 
+        imageFolder + "LEBL at mach 1 - passing the 35M wall - 2.0.0.5681.png",
+        imageFolder + "LEBL at mach 1 - passing the 35M wall - new - 20MB, 150 lines.png")
+
+    createImageCompareTable("image2", 
+        imageFolder + "LEBL at mach 40 - passing the 35M wall - 2.0.0.5681.png",
+        imageFolder + "LEBL at mach 40 - passing the 35M wall - new - 120 MB, 150 lines.png")
+
+    createImageCompareTable("image3", 
+        imageFolder + "LEBL flyover at mach 60 - 2.0.0.5681.png",
+        imageFolder + "LEBL flyover at mach 60 - new.png")
+
+    createImageCompareTable("image4", 
+        imageFolder + "LEBL flyover at mach 60 - FREERUNNING - 2.0.0.5681.png",
+        imageFolder + "LEBL flyover at mach 60 - FREERUNNING - new.png")
+</script>
+
+</body>
+</html>
