@@ -36,6 +36,12 @@ def convertToCsv(iImage):
     finalSize = 128, 128
     image = iImage.resize(finalSize) # resize using nearest filter
 
+    # rotate 90 degrees counter clockwise
+    # we do this so the radar imags matches the storm in aXion
+    # the problem might be in axion, but much simpler to rotate the image at this point...
+    #
+    image = image.rotate(90) 
+
     csv = ""
     pixels = image.load()
     size = image.size
