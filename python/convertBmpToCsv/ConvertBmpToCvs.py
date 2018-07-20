@@ -28,8 +28,8 @@ from PIL import Image
 #  
 # 0 – 15   -> Black
 # 16 – 31  -> Green
-# 32 – 63  -> Yellow
-# 64 – 127 -> Red // turn on turbulence bit
+# 32 – 47  -> Yellow
+# 48 – 63 -> Red
 #
 def convertToCsv(iImage):
 
@@ -48,22 +48,16 @@ def convertToCsv(iImage):
             if v == (0, 0, 0): # if black
                 b = 0
             elif v[1] > 0 and v[0] > 0: # is yellow
-                #b = b | random.randint(32, 63) # 63
-                b = b | 63 # 63
+                b = b | 40
             elif v[0] > 0 : # only red
-                #b = b | random.randint(32, 63)
+                b = b | 55
                 b = b | 1 << 6 # flip the turbulence bit
             elif v[1] > 0: #only  green
-                #b = b | random.randint(16,31) # 31
-                b = b | 31 # 31
+                b = b | 20
                 
             csv +=  str(b) + ","
         csv += "\n"
 
-    # remove 2 last character
-    csv = csv[:-2]
-    # add \n
-    csv += "\n"
     return csv
 
 #------------------------------------------------------------------------------
@@ -78,62 +72,47 @@ def isGreater(iSourceRgb, iDestinationRgb):
     return r;
 
 #------------------------------------------------------------------------------
+def makeGradientCsv():
+    csv = ""
+
+    for y in range(128):
+        for x in range(128):
+            csv += str(y/2) + ","
+        csv += "\n" 
+
+    csvFile = open("./gradientFile.csv","w+")
+    csvFile.write(csv)
+    csvFile.close()
+    return;
+
+#------------------------------------------------------------------------------
 #--- MAIN
 #------------------------------------------------------------------------------
 
 if(len(sys.argv) >= 3):
-    folderPath = sys.argv[1]
-    outputCsvFileName = sys.argv[2]
-    print("Converting bmp images from: %s" % folderPath)
+    inputImagePath = sys.argv[1]
+    outputCsvFileNamePath = sys.argv[2]
+    print("Converting bmp image: %s" % inputImagePath)
 
-    # glob all bmp in folder
-    slicesToProject = glob.glob(folderPath + "/*.bmp")
-
-    # we need at least on image and we assume all slice size equals
     sliceSize = 0, 0
-    if(len(slicesToProject) >= 1):
-        slice = Image.open(slicesToProject[0])
-        sliceSize = slice.size
-        print("Slice size: (%d, %d)" % (sliceSize[0],sliceSize[1]))
-
-    # create an image where we will project all slices
-    sliceProjections = Image.new('RGB', sliceSize, (0,0,0))
-    for slicePath in slicesToProject:
-        print("Projecting slice %s" % slicePath)
-        slice = Image.open(slicePath)
-
-#newSize = sliceSize[0] / 4, sliceSize[1] / 4
-#slice = slice.resize( newSize )
-#slice.save(slicePath, "BMP")
-
-        sourcePixels = slice.load()
-        destinationPixels = sliceProjections.load()
-
-        # for each pixel write to the sliceProjections if value is greater.
-        for y in range(sliceSize[1]):
-            for x in range(sliceSize[0]):
-                sourceValue = sourcePixels[x, y]
-                destinationValue = destinationPixels[x, y]
-
-                if isGreater(sourceValue, destinationValue):
-                    destinationPixels[x, y] = sourceValue
-
-    # save just to visualy inspect
-    # save as jpeg so it is not glob by the bmp filter on line 90
-    sliceProjections.save(folderPath + "/sliceProjections.jpeg", "JPEG")
+    slice = Image.open(inputImagePath)
+    sliceSize = slice.size
+    print("Slice size: (%d, %d)" % (sliceSize[0],sliceSize[1]))
 
     # convert sliceProjections to a csv file
-    csvContent = convertToCsv(sliceProjections);
-    csvFile = open(folderPath + "/" + outputCsvFileName,"w+")
+    csvContent = convertToCsv(slice);
+    csvFile = open(outputCsvFileNamePath,"w+")
     csvFile.write(csvContent)
     csvFile.close()
 
+elif(len(sys.argv) == 2 and sys.argv[1] == "makeGradient"):
+    makeGradientCsv()
 else:
     m = '''Invalid number Of arguments:
     1- Provide a folder path to the images slices
     2- Provide the output name of the csv file
 
-    Ex: python ConvertBmpToCsv ./Archive output.csv
+    Ex: python ConvertBmpToCsv ./Archive/storm_1_1.bmp ./output.csv
     '''
     print(m)
 
